@@ -65,8 +65,15 @@ add_compile_definitions($<$<BOOL:${LV_USE_FFMPEG}>:LV_USE_FFMPEG=1>)
 add_subdirectory(lvgl)
 target_include_directories(lvgl PUBLIC ${PROJECT_SOURCE_DIR} ${SDL2_INCLUDE_DIRS})
 
+# Add SquareLine UI subdirectory
+add_subdirectory(UI)
+# 告诉 ui 目标去哪里找 lvgl 的头文件
+# ${PROJECT_SOURCE_DIR} 是项目根目录，编译器就能从这里找到 "lvgl/lvgl.h"
+target_include_directories(ui PUBLIC ${PROJECT_SOURCE_DIR})
+
 set(MAIN_SOURCES src/mouse_cursor_icon.c src/hal/hal.c)
-set(MAIN_LIBS lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_LIBRARIES})
+# 将所有库（如 lvgl SDL2多媒体库 LVGL演示程序组件）链接到项目生成的可执行文件中
+set(MAIN_LIBS lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_LIBRARIES} ui)
 
 # Create the main executable, depending on the FreeRTOS option
 if(USE_FREERTOS)
